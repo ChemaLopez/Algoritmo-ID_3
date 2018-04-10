@@ -6,14 +6,13 @@ import java.util.ArrayList;
 public class Decision {
 
 	
-	private ArrayList<Infor> listaAtributos;
+	private ArrayList<Infor> opciones;
 	private String nombre;
-	
 	
 	public Decision(String nombre) {
 		
 		this.nombre=nombre;
-		listaAtributos = new ArrayList<Infor>();
+		opciones = new ArrayList<Infor>();
 		
 	}
 	
@@ -23,11 +22,11 @@ public class Decision {
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
 	}
-	public ArrayList<Infor> getListaAtributos() {
-		return listaAtributos;
+	public ArrayList<Infor> getopcioness() {
+		return opciones;
 	}
-	public void setListaAtributos(ArrayList<Infor> listaAtributos) {
-		this.listaAtributos = listaAtributos;
+	public void setopciones(ArrayList<Infor>opciones) {
+		this.opciones = opciones;
 	}
 	
 	
