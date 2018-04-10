@@ -1,5 +1,6 @@
 package Decision;
 
+
 import java.util.ArrayList;
 
 public class Decision {
@@ -9,7 +10,12 @@ public class Decision {
 	private String nombre;
 	
 	
-	
+	public Decision(String nombre) {
+		
+		this.nombre=nombre;
+		listaAtributos = new ArrayList<Infor>();
+		
+	}
 	
 	public String getNombre() {
 		return nombre;
