@@ -13,7 +13,9 @@ public class Main {
 			
 			
 			try {
-				lista.leerListaAtributos("ListaAtributo.txt");
+				
+				lista.leerListaAtributos("AtributosJuego.txt");
+			
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
