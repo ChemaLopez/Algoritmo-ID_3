@@ -89,9 +89,12 @@ public void leerOpciones(String archivo) throws IOException{
 			
 		}
 		      buffer.close();
-		
+		     for( Atributo atr : listaAtributos) {
+		    	 atr.actualiza();
+		     }
 	}
 	
+
 
 
 
