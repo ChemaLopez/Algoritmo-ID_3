@@ -1,44 +1,52 @@
 package Decision;
 
-import java.util.ArrayList;
+import java.util.HashMap;
+
 
 public class Atributo {
 
-	private ArrayList<Decision>  opciones;
+	private HashMap<String,Integer> p;
+	private HashMap<String, Integer> s;
 	private String nombre;
 	
 	public Atributo(String nombre) {
-		opciones = new ArrayList<Decision>();
 		this.nombre = nombre;
+		p = new HashMap<String, Integer>();
+		s = new HashMap<String, Integer>();
+
 	}
 	
 	
 
 	
+	
+	
+	public void addElement(String opcion, boolean v){
+		if(v){
+			if(p.containsKey(opcion))
+				p.put(opcion, p.get(opcion)+1);
+			else
+				p.put(opcion,1);
+		}else{
+			if(s.containsKey(opcion))
+				s.put(opcion, s.get(opcion)+1);
+			else
+				s.put(opcion,1);
 
-	public ArrayList<Decision> getOpciones() {
-		return opciones;
+		}
 	}
 
-
-
-
-	public void setAtributo(ArrayList<Decision> opciones) {
-		this.opciones = opciones;
-	}
 	
-	
-	public void addOpcion(String opcion){
+	public String getP(){
 		
+		String cadena="";
 		
-		Decision op = new Decision(opcion);
-		this.opciones.add(op);
-	
+		cadena=p.toString()+" "+s.toString();
+		
+		return cadena;
 		
 		
 	}
-	
-	
 	
 	public String getName(){
 		
