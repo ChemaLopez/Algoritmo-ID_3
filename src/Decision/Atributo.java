@@ -4,94 +4,136 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-
 public class Atributo {
 
-	private HashMap<String,Double> p;
-	private HashMap<String, Double> s;
-	private HashMap<String, Integer> n;
+	private HashMap<String, Double> p;
+	private HashMap<String, Double> n;
+	private HashMap<String, Integer> s;
+	private HashMap<String, Double> merito;
 	private int total;
 	private String nombre;
-	
+
 	public Atributo(String nombre) {
 		this.nombre = nombre;
 		p = new HashMap<String, Double>();
-		s = new HashMap<String, Double>();
-		n = new HashMap<String, Integer>();
-
+		n = new HashMap<String, Double>();
+		s = new HashMap<String, Integer>();
+		merito= new HashMap<String,Double>();
 	}
-	
-	
 
-	
-	
-	
-	public void addElement(String opcion, boolean v){
-		if(v){
-			if(p.containsKey(opcion))
-				p.put(opcion, p.get(opcion)+1.0);
+	public void addElement(String opcion, boolean v) {
+		if (v) {
+			if (p.containsKey(opcion))
+				p.put(opcion, p.get(opcion) + 1.0);
 			else
-				p.put(opcion,1d);
-		}else{
-			if(s.containsKey(opcion))
-				s.put(opcion, s.get(opcion)+1.0);
+				p.put(opcion, 1d);
+		} else {
+			if (n.containsKey(opcion))
+				n.put(opcion, n.get(opcion) + 1.0);
 			else
-				s.put(opcion,1d);
+				n.put(opcion, 1d);
 
 		}
-		
+
 	}
 
-	
-	public void actualiza(){
-		
-		Set<String> llavero= new HashSet(p.keySet());
-		for(String clave :s.keySet()) {
-			
-			if(!llavero.contains(clave)) {
-				
+	public double calculaMerito(String actual) {
+
+		double nValor=0;
+		double pValor=0;
+		double r=0;
+
+		if (n.containsKey(actual)) {
+			nValor = n.get(actual);
+		} else {
+			nValor = 0;
+		}
+
+		if (p.containsKey(actual)) {
+			pValor = p.get(actual);
+		} else {
+			pValor = 0;
+		}
+		double aux= s.get(actual);
+		r = aux/total;
+
+		double entropia = 0;
+
+		if (nValor == 0) {
+			entropia = (-pValor * ((Math.log(pValor) / Math.log(2))));
+		} else if (pValor == 0) {
+			entropia = (-(nValor * (Math.log(nValor) / Math.log(2))));
+		} else {
+			entropia = (-pValor * ((Math.log(pValor) / Math.log(2))) - (nValor * (Math.log(nValor) / Math.log(2))));
+		}
+
+		return r*entropia;
+
+	}
+
+	public void actualiza() {
+
+		Set<String> llavero = new HashSet(p.keySet());
+		for (String clave : n.keySet()) {
+
+			if (!llavero.contains(clave)) {
+
 				llavero.add(clave);
 			}
 		}
-		
- 		for(String clave : llavero){
-			if(p.containsKey(clave) && s.containsKey(clave)) {
-			 total+=(p.get(clave).intValue()+s.get(clave).intValue());
-			 	n.put(clave,p.get(clave).intValue()+s.get(clave).intValue());
-				p.put(clave, p.get(clave)/total);
-				s.put(clave, s.get(clave)/total);
-				
-			}
-			else
-				if(p.containsKey(clave)) {
-					total+=p.get(clave).intValue();
-				 	n.put(clave,p.get(clave).intValue());
-					p.put(clave, p.get(clave)/total);
-				}
-				else {
-					total+=s.get(clave).intValue();
-				 	n.put(clave, s.get(clave).intValue());
-					s.put(clave, s.get(clave)/total);
 
-				}
+		for (String clave : llavero) {
+			if (p.containsKey(clave) && n.containsKey(clave)) {
+				total += (p.get(clave).intValue() + n.get(clave).intValue());
+				s.put(clave, p.get(clave).intValue() + n.get(clave).intValue());
+				p.put(clave, p.get(clave) / s.get(clave));
+				n.put(clave, n.get(clave) / s.get(clave));
+
+			} else if (p.containsKey(clave)) {
+				total += p.get(clave).intValue();
+				s.put(clave, p.get(clave).intValue());
+				p.put(clave, p.get(clave) / s.get(clave));
+			} else {
+				total += n.get(clave).intValue();
+				s.put(clave, n.get(clave).intValue());
+				n.put(clave, n.get(clave) / s.get(clave));
+
+			}
 
 		}
-		
+
+		for(String clave: llavero){
+				merito.put(clave,calculaMerito(clave));
+		}
+			
+
 	}
 	
-	public String getP(){
+	
+	public double getMerito(){
 		
-		String cadena="";
+		double meritoTotal=0;
 		
-		cadena=p.toString()+" "+s.toString() +" "+n.toString()+" "+ total;
+		for(String value : merito.keySet()){
+			
+			meritoTotal+=merito.get(value);
+		}
 		
+		return meritoTotal;
+	}
+
+	public String getP() {
+
+		String cadena = "";
+
+		cadena = p.toString() + " " + n.toString() + " " + s.toString() + " " + total;
+
 		return cadena;
-		
-		
+
 	}
-	
-	public String getName(){
-		
+
+	public String getName() {
+
 		return nombre;
 	}
 }

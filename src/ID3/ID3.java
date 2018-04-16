@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import Decision.Atributo;
-import Decision.Decision;
 
 public class ID3 {
 
@@ -47,8 +46,6 @@ public class ID3 {
 			}
 		
 		
-			
-			
 			
 		}
 		      buffer.close();
@@ -90,10 +87,27 @@ public void leerOpciones(String archivo) throws IOException{
 		}
 		      buffer.close();
 		     for( Atributo atr : listaAtributos) {
-		    	 atr.actualiza();
+		    	 if(atr!=listaAtributos.get(listaAtributos.size()-1)){
+		    		 atr.actualiza();
+		    		System.out.println(atr.getName()+" "+ atr.getMerito());
+		    	 }
 		     }
 	}
 	
+
+private void calculaMerito(){
+	
+	double meritoMejor=Double.MAX_VALUE;
+	for(Atributo atr: listaAtributos){
+		double aux= atr.getMerito();
+		System.out.println(aux);
+		if(aux<meritoMejor){
+			meritoMejor=aux;
+			
+		}
+	}
+
+}
 
 
 
