@@ -5,9 +5,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Map;
-
+ 
 import Decision.Atributo;
+import Decision.Nodo;
 
 public class ID3 {
 
@@ -86,27 +86,92 @@ public void leerOpciones(String archivo) throws IOException{
 			
 		}
 		      buffer.close();
+	
 		     for( Atributo atr : listaAtributos) {
 		    	 if(atr!=listaAtributos.get(listaAtributos.size()-1)){
 		    		 atr.actualiza();
-		    		System.out.println(atr.getName()+" "+ atr.getMerito());
 		    	 }
+		     
 		     }
-	}
+	
+		     listaAtributos.remove(listaAtributos.size()-1);
+		     
+		    Nodo mejor= actualizaLista(listaAtributos);
+
+		    recursividadTotal(mejor, listaAtributos);
+		    
+		    System.out.println("aqui");
+}
 	
 
-private void calculaMerito(){
-	
+
+
+
+private Nodo actualizaLista(ArrayList<Atributo> lista){
+	Atributo atrMejor = lista.get(0);
 	double meritoMejor=Double.MAX_VALUE;
-	for(Atributo atr: listaAtributos){
+	for(Atributo atr: lista){
+
 		double aux= atr.getMerito();
-		System.out.println(aux);
 		if(aux<meritoMejor){
 			meritoMejor=aux;
-			
+			atrMejor=atr;
 		}
 	}
+	
+	Nodo mejor= new Nodo(new ArrayList<Nodo>(), atrMejor.getPositivos(), atrMejor.getNegativos(), 0, atrMejor.getMerito(), atrMejor.getName());
+	
+	for(String atr: atrMejor.getClaves()){
+		Nodo aux= new Nodo(new ArrayList<Nodo>(), atrMejor.getPositivos(atr), atrMejor.getNegativos(atr), atrMejor.getNum(atr), atrMejor.getMerito(atr), atr);
+		mejor.addHijo(aux);
+	}
 
+	
+	return mejor;
+}
+
+
+
+
+
+
+
+
+private void recursividadTotal(Nodo mejor, ArrayList<Atributo> atributos){
+	ArrayList<Atributo> aux = new ArrayList<Atributo>();
+	
+	if(atributos.size() == 1){
+		for(Nodo hijo: mejor.getHijos()){
+			if(hijo.getPositivos() > 0 && hijo.getNegativos() == 0){
+				hijo.addHijo(new Nodo("SI"));
+			} else if (hijo.getNegativos() > 0 && hijo.getPositivos() == 0){
+				hijo.addHijo(new Nodo("NO"));
+			} 
+		}		
+	}
+	else{
+		// Quitamos el mejor anterior
+		for(int i = 0; i < atributos.size(); i++){
+			if(!atributos.get(i).getName().equals(mejor.getNombre()))
+				aux.add(atributos.get(i));
+		}
+		
+		for(Nodo hijo: mejor.getHijos()){
+			//ELIMINAR LOS EJEMPLOS DE 
+	
+			if(hijo.getPositivos() > 0 && hijo.getNegativos() == 0){
+				hijo.addHijo(new Nodo("SI"));
+			} else if (hijo.getNegativos() > 0 && hijo.getPositivos() == 0){
+				hijo.addHijo(new Nodo("NO"));
+			} else {	
+				Nodo nuevoMejor = actualizaLista(aux);		
+				hijo.addHijo(nuevoMejor);
+				recursividadTotal(nuevoMejor, aux);
+			}	
+			
+			
+		}		
+	}		
 }
 
 

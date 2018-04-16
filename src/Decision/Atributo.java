@@ -37,6 +37,9 @@ public class Atributo {
 
 	}
 
+	
+	
+	
 	public double calculaMerito(String actual) {
 
 		double nValor=0;
@@ -73,7 +76,7 @@ public class Atributo {
 
 	public void actualiza() {
 
-		Set<String> llavero = new HashSet(p.keySet());
+		Set<String> llavero = new HashSet<String>(p.keySet());
 		for (String clave : n.keySet()) {
 
 			if (!llavero.contains(clave)) {
@@ -121,6 +124,51 @@ public class Atributo {
 		
 		return meritoTotal;
 	}
+	
+	
+	public int getPositivos() {
+		
+		return p.size();
+		
+	}
+	
+	
+	public int getNegativos() {
+		
+		return n.size();
+		
+	}
+	
+	public double getPositivos(String clave){
+		if(p.containsKey(clave))
+			return p.get(clave)*s.get(clave);
+		else
+			return 0;
+	}
+	
+	
+	public double getNegativos(String clave){
+		if(n.containsKey(clave))
+			return n.get(clave)*s.get(clave);
+		else
+			return 0;
+	}
+	
+	public double getNum(String clave){
+		
+		return s.get(clave);
+	}
+	
+	public double getMerito(String clave){
+		
+		return merito.get(clave);
+	}
+	
+	public Set<String> getClaves(){
+		
+		return s.keySet();
+	}
+	
 
 	public String getP() {
 
