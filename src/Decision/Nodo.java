@@ -11,7 +11,7 @@ public class Nodo {
 	private double num;
 	private double entropia;
 	private String nombre;
-	
+	private Ejemplos ejemplos;
 	
 	
 	
@@ -83,6 +83,34 @@ public class Nodo {
 	}
 	public void setNombre(String nombre) {
 		this.nombre = nombre;
+	}
+
+
+	public void eliminaColumna(int columna){
+		
+		ejemplos.eliminarEjemplo(columna);
+		
+	}
+	
+
+	public Ejemplos getEjemplos() {
+		return ejemplos;
+	}
+
+
+
+	public void setEjemplos(Ejemplos listaEjemplos) {
+		this.ejemplos = listaEjemplos;
+	}
+
+
+	public void addPositivo() {
+		// TODO Auto-generated method stub
+		positivos++;
+	}
+	public void addNegativo() {
+		// TODO Auto-generated method stub
+		negativos++;
 	}
 	
 	

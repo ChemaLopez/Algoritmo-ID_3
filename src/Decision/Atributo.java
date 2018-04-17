@@ -74,6 +74,18 @@ public class Atributo {
 
 	}
 
+	
+	public void borra(){
+		
+		p.clear();
+		n.clear();
+		s.clear();
+		merito.clear();
+		total=0;
+	}
+	
+	
+	
 	public void actualiza() {
 
 		Set<String> llavero = new HashSet<String>(p.keySet());

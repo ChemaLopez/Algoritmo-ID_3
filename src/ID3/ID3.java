@@ -7,15 +7,21 @@ import java.io.IOException;
 import java.util.ArrayList;
  
 import Decision.Atributo;
+import Decision.Ejemplos;
 import Decision.Nodo;
 
 public class ID3 {
 
 	private ArrayList<Atributo> listaAtributos;
 	private ArrayList<ArrayList<String[]>> entradas;
-	
+	private Ejemplos ejemplos;
+	private String limite;
 	
 	public ID3(){
+		
+		limite="";
+		
+		ejemplos = new Ejemplos();
 		listaAtributos = new ArrayList<Atributo>();
 		entradas = new ArrayList<ArrayList<String[]>>();
 		
@@ -45,8 +51,6 @@ public class ID3 {
 				listaAtributos.add(nuevoAtributo);
 			}
 		
-		
-			
 		}
 		      buffer.close();
 		
@@ -64,18 +68,18 @@ public void leerOpciones(String archivo) throws IOException{
 		String cadena;
 		FileReader lector = new FileReader(newFile);
 		BufferedReader buffer = new BufferedReader(lector);
-		String solucion="";
 
 		//LEER EL ARCHIVO HASTA EL FINAL DE ARCHIVO
 		while((cadena = buffer.readLine())!=null) {
 			//PARSEAR CADA LINEA
 			String op[] = cadena.split(",");
+			ejemplos.addEjemplo(op); 
 			int i =0;
-			if(solucion=="") {
-				solucion=op[op.length-1];				
+			if(limite=="") {
+				limite=op[op.length-1];				
 			}
 			for(String decision : op) {
-				if(op[op.length-1].compareTo(solucion)==0)
+				if(op[op.length-1].compareTo(limite)==0)
 					listaAtributos.get(i).addElement(decision,false);
 				else
 					listaAtributos.get(i).addElement(decision,true);
@@ -85,6 +89,7 @@ public void leerOpciones(String archivo) throws IOException{
 		
 			
 		}
+	
 		      buffer.close();
 			     System.out.println(toString());
 
@@ -97,8 +102,8 @@ public void leerOpciones(String archivo) throws IOException{
 		     System.out.println(toString());
 		     listaAtributos.remove(listaAtributos.size()-1);
 		     
-		    Nodo mejor= actualizaLista(listaAtributos);
-
+		    Nodo mejor= actualizaLista(listaAtributos,ejemplos);
+		    mejor.setEjemplos(ejemplos);
 		    recursividadTotal(mejor, listaAtributos);
 		    
 		    System.out.println("aqui");
@@ -108,11 +113,14 @@ public void leerOpciones(String archivo) throws IOException{
 
 
 
-private Nodo actualizaLista(ArrayList<Atributo> lista){
+private Nodo actualizaLista(ArrayList<Atributo> lista, Ejemplos listaDeEjemplo){
 	Atributo atrMejor = lista.get(0);
 	double meritoMejor=Double.MAX_VALUE;
-	for(Atributo atr: lista){
 
+
+	
+	for(Atributo atr: lista){
+		
 		double aux= atr.getMerito();
 		if(aux<meritoMejor){
 			meritoMejor=aux;
@@ -123,7 +131,24 @@ private Nodo actualizaLista(ArrayList<Atributo> lista){
 	Nodo mejor= new Nodo(new ArrayList<Nodo>(), atrMejor.getPositivos(), atrMejor.getNegativos(), 0, atrMejor.getMerito(), atrMejor.getName());
 	
 	for(String atr: atrMejor.getClaves()){
-		Nodo aux= new Nodo(new ArrayList<Nodo>(), atrMejor.getPositivos(atr), atrMejor.getNegativos(atr), atrMejor.getNum(atr), atrMejor.getMerito(atr), atr);
+		Nodo aux= new Nodo(new ArrayList<Nodo>(), 0, 0, atrMejor.getNum(atr), atrMejor.getMerito(atr), atr);
+	
+		Ejemplos listaEjemplos= new Ejemplos();
+		
+		for(ArrayList<String> ejem :listaDeEjemplo.getEjemplo()){
+			if(ejem.contains(atr)){
+				listaEjemplos.add(ejem);
+			
+				if(ejem.get(ejem.size()-1).compareTo(limite)==0){
+					aux.addNegativo();
+				}else
+					aux.addPositivo();
+			}
+			
+		}
+		aux.setNum(aux.getNegativos()+aux.getPositivos());
+		aux.setEjemplos(listaEjemplos);
+		
 		mejor.addHijo(aux);
 	}
 
@@ -152,20 +177,26 @@ private void recursividadTotal(Nodo mejor, ArrayList<Atributo> atributos){
 	}
 	else{
 		// Quitamos el mejor anterior
+		int nAtr=-1;
 		for(int i = 0; i < atributos.size(); i++){
-			if(!atributos.get(i).getName().equals(mejor.getNombre()))
-				aux.add(atributos.get(i));
+			if(!atributos.get(i).getName().equals(mejor.getNombre())) {
+				ArrayList<Atributo> listaAux= (ArrayList<Atributo>) atributos.clone();
+				aux.add(listaAux.get(i));
+			}else{
+				nAtr=i;
+			}
 		}
 		
 		for(Nodo hijo: mejor.getHijos()){
 			//ELIMINAR LOS EJEMPLOS DE 
-	
+			
 			if(hijo.getPositivos() > 0 && hijo.getNegativos() == 0){
 				hijo.addHijo(new Nodo("SI"));
 			} else if (hijo.getNegativos() > 0 && hijo.getPositivos() == 0){
 				hijo.addHijo(new Nodo("NO"));
-			} else {	
-				Nodo nuevoMejor = actualizaLista(aux);		
+			} else {
+				hijo.eliminaColumna(nAtr);
+				Nodo nuevoMejor = actualizaLista(aux, hijo.getEjemplos());		
 				hijo.addHijo(nuevoMejor);
 				recursividadTotal(nuevoMejor, aux);
 			}	
