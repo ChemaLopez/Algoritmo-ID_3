@@ -76,9 +76,9 @@ public void leerOpciones(String archivo) throws IOException{
 			}
 			for(String decision : op) {
 				if(op[op.length-1].compareTo(solucion)==0)
-					listaAtributos.get(i).addElement(decision,true);
-				else
 					listaAtributos.get(i).addElement(decision,false);
+				else
+					listaAtributos.get(i).addElement(decision,true);
 
 				i++;
 			}
@@ -86,14 +86,15 @@ public void leerOpciones(String archivo) throws IOException{
 			
 		}
 		      buffer.close();
-	
+			     System.out.println(toString());
+
 		     for( Atributo atr : listaAtributos) {
 		    	 if(atr!=listaAtributos.get(listaAtributos.size()-1)){
 		    		 atr.actualiza();
 		    	 }
 		     
 		     }
-	
+		     System.out.println(toString());
 		     listaAtributos.remove(listaAtributos.size()-1);
 		     
 		    Nodo mejor= actualizaLista(listaAtributos);
