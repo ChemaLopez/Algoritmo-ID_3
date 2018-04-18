@@ -55,7 +55,7 @@ public class ID3 {
 
 	}
 
-	public void leerOpciones(String archivo) throws IOException {
+	public Nodo leerOpciones(String archivo) throws IOException {
 
 		String currentDir = new File("").getAbsolutePath();
 
@@ -99,8 +99,8 @@ public class ID3 {
 		Nodo mejor = actualizaLista(listaAtributos, ejemplos);
 		mejor.setEjemplos(ejemplos);
 		recursividadTotal(mejor, listaAtributos);
-
-		System.out.println("aqui");
+	
+		return mejor;
 	}
 
 	private Nodo actualizaLista(ArrayList<Atributo> lista, Ejemplos listaDeEjemplo) {
