@@ -28,7 +28,6 @@ public class Main {
 			
 			vista.initView();
 			vista.setVisible(true);
-			vista.setSize(400,400);
 			System.out.println(id3.toString());
 		
 		

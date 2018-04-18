@@ -1,5 +1,6 @@
 package GUI;
 
+import java.awt.Color;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
@@ -60,8 +61,7 @@ public class VistaPrincipal  extends JFrame{
 		    }
 		};
 	this.addWindowListener(exitListener);
-	Object parent = graph.getDefaultParent();
-
+	
 
 	//PREPARA EL GRAFICO PARA ACTUALIZAR
 	graph.getModel().beginUpdate();
@@ -69,25 +69,34 @@ public class VistaPrincipal  extends JFrame{
 	try{
 		
 		
-	 recursivoPinta(arbol, graph, 50,20 );
+	 recursivoPinta(arbol, graph,null );
 	
 	}finally{
 	   graph.getModel().endUpdate();
 	}
 	
-	  mxIGraphLayout layout = new mxHierarchicalLayout(graph);
-      layout.execute(graph.getDefaultParent());
-
-	final mxGraphComponent graphComponent = new mxGraphComponent(graph);
-	getContentPane().add(graphComponent);
+	graph.setCellsEditable(false);
 	
+	 mxIGraphLayout layout = new mxHierarchicalLayout(graph);
+     layout.execute(graph.getDefaultParent());
+
+      final mxGraphComponent graphComponent = new mxGraphComponent(graph);
+      graphComponent.setBackground(Color.WHITE);
+	
+	getContentPane().add(graphComponent);
+	this.setSize(graphComponent.getSize());
 	
 	}
 
-	private void recursivoPinta(Nodo padre, mxGraph graph, double x, double y){
-		double i=0.5;
-		double ubicacionPadre= padre.getHijos().size()*1.5;
-		Object v1 = graph.insertVertex(graph.getDefaultParent(), null, padre.getNombre(),0, 0, 100,100,  padre.getNombre(), false);
+	private void recursivoPinta(Nodo padre, mxGraph graph, Object verticePadre){
+		
+		Object v1;
+		
+		if(verticePadre!=null){
+			 v1 = verticePadre;
+
+		}else
+		 v1 = graph.insertVertex(graph.getDefaultParent(), null, padre.getNombre(),0, 0, 100,100,  padre.getNombre(), false);
 		
 		for(Nodo edge: padre.getHijos()){
 			
@@ -96,9 +105,8 @@ public class VistaPrincipal  extends JFrame{
 				   Object v2 = graph.insertVertex(graph.getDefaultParent(), null, vertices.getNombre(),0,0,100,100);
 				   	graph.insertEdge(graph.getDefaultParent(), null, edge.getNombre(), v1, v2);
 				   	if(vertices.getHijos().size()>0)
-				   		recursivoPinta(vertices, graph, x*i, y);
+				   		recursivoPinta(vertices, graph, v2);
 				   	
-				   	i+=3.5;
 			}
 			
 		}
