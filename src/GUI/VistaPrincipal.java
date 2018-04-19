@@ -1,28 +1,53 @@
 package GUI;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridLayout;
+import java.awt.Label;
+import java.awt.Panel;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 
 import com.mxgraph.layout.mxIGraphLayout;
 import com.mxgraph.layout.hierarchical.mxHierarchicalLayout;
-import com.mxgraph.model.mxICell;
 import com.mxgraph.swing.mxGraphComponent;
-import com.mxgraph.swing.handler.mxVertexHandler;
 import com.mxgraph.view.mxGraph;
 
+import Decision.Atributo;
+import Decision.Ejemplos;
 import Decision.Nodo;
 
 public class VistaPrincipal  extends JFrame{
 
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private JPanel botonera;
+	private JPanel arbolPanel;
+	private JButton boton;
+	private JTextField jTOpcion;
+	private Label result;
+	private Label resultado;
 	private static VistaPrincipal instance;
 	private mxGraph graph;
 	private Nodo arbol;
+	private ArrayList<Atributo> listaAtributos;
 	
 	public static VistaPrincipal getInstance(){
 		
@@ -44,6 +69,7 @@ public class VistaPrincipal  extends JFrame{
 	
 	public void initView(){
 		
+	
 		
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 
@@ -83,8 +109,59 @@ public class VistaPrincipal  extends JFrame{
       final mxGraphComponent graphComponent = new mxGraphComponent(graph);
       graphComponent.setBackground(Color.WHITE);
 	
-	getContentPane().add(graphComponent);
+	
+	botonera = new JPanel();
+	arbolPanel = new JPanel();
+	arbolPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+	
+	arbolPanel.add(graphComponent);
+	//arbolPanel.setSize(graphComponent.getSize());
+	this.add(graphComponent,BorderLayout.NORTH);
+
+	boton = new JButton("Buscar");
+	
+	boton.addActionListener(new ActionListener( ) {
+		
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			comprueba();
+		}
+	});
+	
+	botonera.setLayout(new FlowLayout(FlowLayout.CENTER, 1,0));
+	botonera.setBorder(new EmptyBorder(10, 10, 10, 10));
+	
+	jTOpcion = new JTextField("Introduzca los atributos separados por comas");
+	
+	jTOpcion.addFocusListener(new FocusListener() {
+		
+		@Override
+		public void focusLost(FocusEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		public void focusGained(FocusEvent arg0) {
+			// TODO Auto-generated method stub
+			jTOpcion.selectAll();
+		}
+	});
+	botonera.add(jTOpcion);
+	botonera.add(boton);
+	
+	result = new Label("Resultado");
+	resultado = new Label();
+	
+	botonera.add(result);
+	botonera.add(resultado);
+	this.add(botonera,BorderLayout.PAGE_END);
 	this.setSize(graphComponent.getSize());
+
+	this.pack();	
+	this.setResizable(false);
+	this.setVisible(true);
 	
 	}
 
@@ -119,5 +196,59 @@ public class VistaPrincipal  extends JFrame{
 		this.arbol = arbol;
 	}
 	
+	public void setAtributos(ArrayList<Atributo> lista) {
+		this.listaAtributos = lista;
+	}
+	
+	
+	private void comprueba(){
+
+		String texto=jTOpcion.getText();
+		
+		texto = texto.trim();
+		String op[] = texto.split(",");
+		
+		ArrayList<String> aux= new ArrayList<String>();
+		
+		for(String ejemplo: op){
+			aux.add(ejemplo);
+		}
+		
+		if(op.length!=1){
+			String solucion = encuentraSolucion(arbol, aux, listaAtributos);
+			resultado.setText(solucion);
+		}else{
+			
+			JOptionPane.showMessageDialog(null, "Los elementos deben de estar separados por comas", "Error", JOptionPane.ERROR_MESSAGE);
+
+		}
+		
+	}
+	
+	private String encuentraSolucion(Nodo nodo,ArrayList<String> ejemplos, ArrayList<Atributo> lista){
+		
+		if(nodo.getNombre().equals("SI")){
+			return "SI";
+		} else 
+			if (nodo.getNombre().equals("NO")){
+				return "NO";
+			} else {
+				int index = -1;
+					for(Atributo atr: lista){
+						if(atr.getName().equals(nodo.getNombre())){
+							index = lista.indexOf(atr);
+						}
+					}
+					
+					int i = 0;
+					while(i < nodo.getHijos().size() && !lista.get(index).getName().equals(nodo.getHijos().get(i).getNombre())) {				
+						i++;
+					}
+					if(i >= nodo.getHijos().size())
+						return "INDETERMINADO";
+					else
+						return encuentraSolucion(nodo.getHijos().get(i).getHijos().get(0), ejemplos, lista);
+		}	
+		}
 	
 }

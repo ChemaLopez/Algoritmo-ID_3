@@ -204,6 +204,10 @@ public class ID3 {
 		}
 	}
 
+	public ArrayList<Atributo> getAtributos(){
+		return listaAtributos;
+	}
+	
 	public String toString() {
 
 		String cadena = "";

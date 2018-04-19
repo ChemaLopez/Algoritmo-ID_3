@@ -24,10 +24,9 @@ public class Main {
 			
 		
 			vista.setArbol(arbol);
-			
+			vista.setAtributos(id3.getAtributos());
 			
 			vista.initView();
-			vista.setVisible(true);
 			System.out.println(id3.toString());
 		
 		
