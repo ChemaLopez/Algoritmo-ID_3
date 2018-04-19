@@ -152,7 +152,7 @@ public class VistaPrincipal  extends JFrame{
 	botonera.add(boton);
 	
 	result = new Label("Resultado");
-	resultado = new Label();
+	resultado = new Label("         ");
 	
 	botonera.add(result);
 	botonera.add(resultado);
@@ -226,29 +226,49 @@ public class VistaPrincipal  extends JFrame{
 	}
 	
 	private String encuentraSolucion(Nodo nodo,ArrayList<String> ejemplos, ArrayList<Atributo> lista){
-		
+		if(nodo!=null) {
 		if(nodo.getNombre().equals("SI")){
 			return "SI";
 		} else 
 			if (nodo.getNombre().equals("NO")){
 				return "NO";
 			} else {
-				int index = -1;
+					String claveDeNodo="";
+					int posClave=-1;
 					for(Atributo atr: lista){
+						//ESTOY EN EL NODO QUE BUSCO
 						if(atr.getName().equals(nodo.getNombre())){
-							index = lista.indexOf(atr);
+							int i=0;
+							for(String elemento : ejemplos){
+								if(atr.contiene(elemento)){
+									claveDeNodo=elemento;
+									posClave=i;
+								}
+								++i;
+							}
+							
 						}
 					}
 					
-					int i = 0;
-					while(i < nodo.getHijos().size() && !lista.get(index).getName().equals(nodo.getHijos().get(i).getNombre())) {				
-						i++;
+					
+					if(claveDeNodo==""){
+						JOptionPane.showMessageDialog(null, "Uno de los elementos no se puede evaluar", "Error", JOptionPane.ERROR_MESSAGE);
+						return "";
+					}else{
+						Nodo siguiente=null;
+						for(Nodo aux: nodo.getHijos()){
+							
+							if(aux.getNombre().equals(ejemplos.get(posClave)))
+								siguiente=aux;
+						}
+						ejemplos.remove(posClave);
+							return encuentraSolucion(siguiente.getHijos().get(0), ejemplos, lista);
+						
 					}
-					if(i >= nodo.getHijos().size())
-						return "INDETERMINADO";
-					else
-						return encuentraSolucion(nodo.getHijos().get(i).getHijos().get(0), ejemplos, lista);
 		}	
+		
+		}else{
+			return "INDETERMINADO";
 		}
-	
+	}
 }
