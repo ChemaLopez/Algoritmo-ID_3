@@ -181,6 +181,11 @@ public class Atributo {
 		return s.keySet();
 	}
 	
+	
+	public boolean contiene(String clave){
+		
+		return s.containsKey(clave);
+	}
 
 	public String getP() {
 
