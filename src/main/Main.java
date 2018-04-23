@@ -2,6 +2,8 @@ package main;
 
 import java.io.IOException;
 
+import javax.swing.JOptionPane;
+
 import Decision.Nodo;
 import GUI.VistaPrincipal;
 import ID3.ID3;
@@ -32,7 +34,8 @@ public class Main {
 		
 		}catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Archivos  no encontrados", "Error",
+					JOptionPane.ERROR_MESSAGE);
 		}
 	}
 }

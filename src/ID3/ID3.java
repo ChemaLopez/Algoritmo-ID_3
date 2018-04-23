@@ -6,6 +6,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
+
 import Decision.Atributo;
 import Decision.Ejemplos;
 import Decision.Nodo;
@@ -39,18 +41,19 @@ public class ID3 {
 		String cadena;
 		FileReader lector = new FileReader(newFile);
 		BufferedReader buffer = new BufferedReader(lector);
+		
+			// LEER EL ARCHIVO HASTA EL FINAL DE ARCHIVO
+			while ((cadena = buffer.readLine()) != null) {
+				// PARSEAR CADA LINEA
+				String op[] = cadena.split(",");
+				for (String decision : op) {
 
-		// LEER EL ARCHIVO HASTA EL FINAL DE ARCHIVO
-		while ((cadena = buffer.readLine()) != null) {
-			// PARSEAR CADA LINEA
-			String op[] = cadena.split(",");
-			for (String decision : op) {
+					Atributo nuevoAtributo = new Atributo(decision);
+					listaAtributos.add(nuevoAtributo);
+				}
 
-				Atributo nuevoAtributo = new Atributo(decision);
-				listaAtributos.add(nuevoAtributo);
 			}
-
-		}
+		
 		buffer.close();
 
 	}
@@ -64,27 +67,27 @@ public class ID3 {
 		String cadena;
 		FileReader lector = new FileReader(newFile);
 		BufferedReader buffer = new BufferedReader(lector);
+		
+			// LEER EL ARCHIVO HASTA EL FINAL DE ARCHIVO
+			while ((cadena = buffer.readLine()) != null) {
+				// PARSEAR CADA LINEA
+				String op[] = cadena.split(",");
+				ejemplos.addEjemplo(op);
+				int i = 0;
+				if (limite == "") {
+					limite = op[op.length - 1];
+				}
+				for (String decision : op) {
+					if (op[op.length - 1].compareTo(limite) == 0)
+						listaAtributos.get(i).addElement(decision, false);
+					else
+						listaAtributos.get(i).addElement(decision, true);
 
-		// LEER EL ARCHIVO HASTA EL FINAL DE ARCHIVO
-		while ((cadena = buffer.readLine()) != null) {
-			// PARSEAR CADA LINEA
-			String op[] = cadena.split(",");
-			ejemplos.addEjemplo(op);
-			int i = 0;
-			if (limite == "") {
-				limite = op[op.length - 1];
+					i++;
+				}
+
 			}
-			for (String decision : op) {
-				if (op[op.length - 1].compareTo(limite) == 0)
-					listaAtributos.get(i).addElement(decision, false);
-				else
-					listaAtributos.get(i).addElement(decision, true);
-
-				i++;
-			}
-
-		}
-
+		
 		buffer.close();
 
 		for (Atributo atr : listaAtributos) {
@@ -99,7 +102,7 @@ public class ID3 {
 		Nodo mejor = actualizaLista(listaAtributos, ejemplos);
 		mejor.setEjemplos(ejemplos);
 		recursividadTotal(mejor, listaAtributos);
-	
+
 		return mejor;
 	}
 
@@ -114,27 +117,26 @@ public class ID3 {
 			atr.borra();
 			// ACTUALIZA CON LOS NUEVOS
 			for (ArrayList<String> ejem : listaDeEjemplo.getEjemplo()) {
-				
-					if (ejem.get(ejem.size() - 1).compareTo(limite) == 0) {
-						atr.addElement(ejem.get(i), false);
 
-					} else {
-						atr.addElement(ejem.get(i), true);
+				if (ejem.get(ejem.size() - 1).compareTo(limite) == 0) {
+					atr.addElement(ejem.get(i), false);
 
-					}
+				} else {
+					atr.addElement(ejem.get(i), true);
 
-				
+				}
+
 			}
 			atr.actualiza();
 			double aux = atr.getMerito();
-			System.out.println(atr.getName()+atr.getMerito());
+			System.out.println(atr.getName() + atr.getMerito());
 			if (aux < meritoMejor) {
 				meritoMejor = aux;
 				atrMejor = atr;
 			}
 			++i;
 		}
-		System.out.println(atrMejor.getName()+" "+atrMejor.getMerito());
+		System.out.println(atrMejor.getName() + " " + atrMejor.getMerito());
 		Nodo mejor = new Nodo(new ArrayList<Nodo>(), atrMejor.getPositivos(), atrMejor.getNegativos(), 0,
 				atrMejor.getMerito(), atrMejor.getName());
 
@@ -204,10 +206,10 @@ public class ID3 {
 		}
 	}
 
-	public ArrayList<Atributo> getAtributos(){
+	public ArrayList<Atributo> getAtributos() {
 		return listaAtributos;
 	}
-	
+
 	public String toString() {
 
 		String cadena = "";
